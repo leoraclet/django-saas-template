@@ -1,0 +1,51 @@
+[project]
+name = "django-startup-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apprise>=1.9.3",
+    "better-exceptions>=0.3.3",
+    "cachalot>=1.5.0",
+    "channels>=4.2.2",
+    "dj-stripe>=2.9.1",
+    "django>=5.2.4",
+    "django-allauth[idp-oidc,mfa,socialaccount]>=65.10.0",
+    "django-celery-beat>=2.8.1",
+    "django-cors-headers>=4.7.0",
+    "django-environ>=0.12.0",
+    "django-health-check>=3.20.0",
+    "djangorestframework>=3.16.0",
+    "drf-spectacular[sidecar]>=0.28.0",
+    "fido2>=2.0.0",
+    "flower>=2.0.1",
+    "gevent>=25.5.1",
+    "gunicorn>=23.0.0",
+    "loguru[apprise]>=0.7.3",
+    "psutil>=7.0.0",
+    "psycopg2-binary>=2.9.10",
+    "redis>=6.2.0",
+    "sentry-sdk>=2.32.0",
+    "uvicorn>=0.35.0",
+    "whitenoise[brotli]>=6.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.6",
+    "black>=25.1.0",
+    "daphne>=4.2.1",
+    "django-browser-reload>=1.18.0",
+    "django-debug-toolbar>=5.2.0",
+    "django-silk>=5.4.0",
+    "django-waffle>=5.0.0",
+    "faker>=37.4.0",
+    "flake8>=7.3.0",
+    "honcho>=2.0.0",
+    "isort>=6.0.1",
+    "marshmallow==3.*",
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.1",
+    "safety>=3.2.4",
+]

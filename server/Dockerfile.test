@@ -1,0 +1,121 @@
+# This Dockerfile is designed for a Django application development environment with a Svelte frontend.
+# It uses a multi-stage build to optimize the image size and improve build performance.
+#
+# Stage 1: Builder for Svelte + Vite app
+# - Base image: node:lts
+# - Sets the working directory to /app.
+# - Copies package.json files and installs dependencies.
+# - Copies the frontend source code and builds the application.
+#
+# Stage 2: Builder for Python environment
+# - Base image: python:3.12-slim
+# - Copies the 'uv' tool from a pre-built image to facilitate dependency management.
+# - Sets the working directory to /app.
+# - Installs project dependencies using 'uv' with caching to speed up subsequent builds.
+# - Adds the application code to the image.
+# - Syncs the project dependencies again to ensure everything is up to date.
+#
+# Final Image
+# - Base image: python:3.12-slim
+# - Copies the application environment from the builder stage while preserving ownership.
+# - Copies the built frontend from the Svelte builder stage.
+# - Installs system dependencies and creates necessary directories.
+# - Copies entrypoint and start scripts, making them executable.
+# - Defines the default command to run the Django development server on port 8000.
+
+#####################################################
+# Stage 2: Build the Svelte + Vite app
+#####################################################
+
+FROM node:lts AS builder-svelte
+
+WORKDIR /app
+
+COPY --from=parent ./frontend/package*.json .
+
+RUN npm install
+
+COPY --from=parent ./frontend .
+
+RUN npm run build
+
+#####################################################
+# BUILD PYTHON ENVIRONMENT
+#####################################################
+
+FROM python:3.12-slim-bullseye AS builder-python
+
+# This approximately follows this guide: https://hynek.me/articles/docker-uv/
+# Which creates a standalone environment with the dependencies.
+# - Silence uv complaining about not being able to use hard links,
+# - tell uv to byte-compile packages for faster application startups,
+# - prevent uv from accidentally downloading isolated Python builds,
+# - pick a Python (use `/usr/bin/python3.12` on uv 0.5.0 and later),
+# - and finally declare `/app` as the target for `uv sync`.
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_PYTHON_DOWNLOADS=never
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Copy the pyproject.toml and uv.lock files
+COPY --from=parent pyproject.toml uv.lock /_lock/
+
+# Change the working directory to the `app` directory
+WORKDIR /app
+
+# Synchronize dependencies.
+# This layer is cached until uv.lock or pyproject.toml change.
+RUN --mount=type=cache,target=/root/.cache \
+    cd /_lock && \
+    uv sync --frozen --no-editable
+
+#####################################################
+# FINAL IMAGE
+#####################################################
+
+FROM python:3.12-slim-bullseye
+
+# Set work directory and user
+WORKDIR /app
+
+# Copy the environment, but not the source code
+COPY --from=builder-python --chown=app:app /app/ /app/
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Copy frontend build
+COPY --from=builder-svelte /app/dist ${APP_HOME}/frontend/
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y netcat
+RUN apt-get autoremove --purge && rm -rf /var/lib/apt/lists/*
+
+# Create diretories
+RUN mkdir -p ${APP_HOME}/staticfiles
+RUN mkdir -p ${APP_HOME}/media
+RUN mkdir -p ${APP_HOME}/logs
+
+# Copy entrypoint script and make it executable
+COPY entrypoint.test.sh entrypoint.test.sh
+RUN sed -i 's/\r$//g' entrypoint.test.sh
+RUN chmod +x entrypoint.test.sh
+
+# Copy start scripts and make them executable
+COPY --from=parent docker/start-django /start-django
+RUN sed -i 's/\r$//g' /start-django
+RUN chmod +x /start-django
+
+COPY --from=parent docker/start-celery-beat /start-celery-beat
+RUN sed -i 's/\r$//g' /start-celery-beat
+RUN chmod +x /start-celery-beat
+
+COPY --from=parent docker/start-celery-worker /start-celery-worker
+RUN sed -i 's/\r$//g' /start-celery-worker
+RUN chmod +x /start-celery-worker
+
+COPY --from=parent docker/start-celery-flower /start-celery-flower
+RUN sed -i 's/\r$//g' /start-celery-flower
+RUN chmod +x /start-celery-flower
+
+# Run entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.test.sh"]

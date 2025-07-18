@@ -1,0 +1,20 @@
+route:
+  receiver: 'discord'
+  repeat_interval: 4h
+  group_by: [alertname, job]
+  # routes:
+  #   - receiver: "mail"
+  #     repeat_interval: 4h
+
+receivers:
+  # - name: "mail"
+  #   email_configs:
+  #     - smarthost: "smtp.gmail.com:465"
+  #       auth_username: "YOUR_EMAIL"
+  #       auth_password: "YOUR_PASSWORD"
+  #       from: "SENDER_EMAIL"
+  #       to: "RECIPIENT_EMAIL"
+  - name: 'discord'
+    discord_configs:
+      - webhook_url: 'https://discord.com/api/webhooks/1281994221317783674/IwQ_PDRC4iE9f0f0V-OZCb4hOqR3xyGswX5ciVu6LZHLxFE2Lu55TSHxj9g_4nRwOSGf'
+        send_resolved: true

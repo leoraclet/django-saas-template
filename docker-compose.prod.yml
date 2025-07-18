@@ -1,0 +1,125 @@
+name: 'django_template'
+
+volumes:
+  postgres_backups:
+  postgres_data:
+  redis_data:
+  traefik_volume:
+  media_volume:
+
+networks:
+  server:
+    driver: bridge
+
+services:
+  django: &django
+    container_name: django
+    restart: always
+    build:
+      context: ./server/
+      dockerfile: Dockerfile.prod
+      additional_contexts:
+        parent: ./
+    command: /start-gunicorn
+    volumes:
+      - ./server/:/app/
+    env_file:
+      - ./.env
+      - ./db.env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8000:8000
+    networks:
+      - server
+
+  celeryworker:
+    <<: *django
+    container_name: celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celery-worker
+
+  celerybeat:
+    <<: *django
+    container_name: celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celery-beat
+
+  flower:
+    <<: *django
+    container_name: flower
+    ports:
+      - '5555:5555'
+    command: /start-celery-flower
+
+  postgres:
+    container_name: postgres
+    restart: always
+    build:
+      context: .
+      dockerfile: ./etc/postgres/Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - postgres_backups:/backups/
+    env_file:
+      - ./db.env
+    ports:
+      - 5432:5432
+    networks:
+      - server
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis
+    restart: always
+    ports:
+      - '127.0.0.1:6379:6379'
+      - '127.0.0.1:8001:8001'
+    volumes:
+      - redis_data:/data
+    networks:
+      - server
+
+  node:
+    image: node:lts
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: node
+    ports:
+      - 4321:4321
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./etc/nginx/Dockerfile
+    container_name: nginx
+    depends_on:
+      - django
+    volumes:
+      - media_volume:/usr/share/nginx/media:ro
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./etc/traefik/Dockerfile
+    container_name: traefik
+    depends_on:
+      - django
+    volumes:
+      - traefik_volume:/etc/traefik/acme
+    ports:
+      - '0.0.0.0:80:80'
+      - '0.0.0.0:443:443'
+      - '0.0.0.0:5555:5555'

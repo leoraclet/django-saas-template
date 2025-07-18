@@ -1,0 +1,29 @@
+name: Test quality and security
+on: [push]
+
+jobs:
+  security:
+    name: Security checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run safety
+        run: uv run safety check
+
+      - name: Run bandit
+        run: uv run bandit ./server -r

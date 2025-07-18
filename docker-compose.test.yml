@@ -1,0 +1,134 @@
+name: "django_template_test"
+
+volumes:
+  redis_data:
+  postgres_data:
+  postgres_backups:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  server:
+    driver: bridge
+
+services:
+  django: &django
+    container_name: django_test
+    restart: always
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+      additional_contexts:
+        parent: ./
+    command: /start-django
+    env_file:
+      - ./.env
+      - ./db.env
+    volumes:
+      - ./server/:/app/
+    ports:
+      - 8000:8000
+    networks:
+      - server
+    develop:
+      # Create a `watch` configuration to update the app
+      watch:
+        # Sync the working directory with the `/app` directory in the container
+        - action: sync
+          path: ./server/
+          target: /app
+
+        # Rebuild the image on changes to the `pyproject.toml`
+        - action: rebuild
+          path: ./pyproject.toml
+
+  celeryworker:
+    <<: *django
+    container_name: celeryworker_test
+    ports: []
+    command: /start-celery-worker
+
+  celerybeat:
+    <<: *django
+    container_name: celerybeat_test
+    ports: []
+    command: /start-celery-beat
+
+  flower:
+    <<: *django
+    container_name: flower_test
+    ports:
+      - "5555:5555"
+    command: /start-celery-flower
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_test
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:8001:8001"
+    volumes:
+      - redis_data:/data
+    networks:
+      - server
+
+  postgres:
+    container_name: postgres
+    restart: always
+    build:
+      context: .
+      dockerfile: ./etc/postgres/Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - postgres_backups:/backups/
+    env_file:
+      - ./db.env
+    ports:
+      - 5432:5432
+    networks:
+      - server
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: always
+    container_name: mailhog
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+    networks:
+      - server
+
+  grafana:
+    container_name: grafana
+    build: ./etc/grafana
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - ./db.env
+      - ./etc/grafana/.env
+    ports:
+      - 3001:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - server
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ./etc/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    ports:
+      - 9090:9090
+    networks:
+      - server

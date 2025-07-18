@@ -1,0 +1,57 @@
+# This Dockerfile is designed for a Django application development environment.
+# It uses a multi-stage build to optimize the image size and improve build performance.
+#
+# Stage 1: Builder
+# - Base image: python:3.12-slim
+# - Copies the 'uv' tool from a pre-built image to facilitate dependency management.
+# - Sets the working directory to /app.
+# - Installs project dependencies using 'uv' with caching to speed up subsequent builds.
+# - Adds the application code to the image.
+# - Syncs the project dependencies again to ensure everything is up to date.
+#
+# Stage 2: Final Image
+# - Base image: python:3.12-slim
+# - Copies the application environment from the builder stage while preserving ownership.
+# - Sets the PATH environment variable to include the virtual environment's bin directory.
+# - Defines the default command to run the Django development server on port 8000.
+
+# Install uv
+FROM python:3.12-slim AS builder
+
+# This approximately follows this guide: https://hynek.me/articles/docker-uv/
+# Which creates a standalone environment with the dependencies.
+# - Silence uv complaining about not being able to use hard links,
+# - tell uv to byte-compile packages for faster application startups,
+# - prevent uv from accidentally downloading isolated Python builds,
+# - pick a Python (use `/usr/bin/python3.12` on uv 0.5.0 and later),
+# - and finally declare `/app` as the target for `uv sync`.
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_PROJECT_ENVIRONMENT=/code/.venv
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Change the working directory to the `app` directory
+WORKDIR /app
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-editable
+
+# Copy the project into the intermediate image
+COPY . /app
+
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-editable
+
+FROM python:3.12-slim
+
+# Copy the environment, but not the source code
+COPY --from=builder --chown=app:app /app/ /app/
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["python", "/app/server/manage.py", "runserver", "0.0.0.0:8000"]

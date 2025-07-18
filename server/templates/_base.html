@@ -1,0 +1,39 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="keywords" content="keyword1, keyword2, keyword3" />
+        <meta name="description" content="Your Description" />
+        <title>
+            {% block title %}
+            {% endblock title %}
+        </title>
+        <meta name="description" content="Your Description" />
+        <meta name="author" content="Your Name" />
+        <link rel="shortcut icon"
+              type="image/png"
+              href="{% static 'img/favicon.png' %}" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700"
+              rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+              rel="stylesheet"
+              type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script defer src="{% static 'js/tailwind-config.js' %}"></script>
+        <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+        <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/theme-change@2.4.0/index.js"></script>
+        <script src="https://js.sentry-cdn.com/c0ecfa03ab656e345429468ee2689035.min.js"
+                crossorigin="anonymous"></script>
+    </head>
+    <body class="font-sans" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+        {% block body %}
+        {% endblock body %}
+    </body>
+</html>
