@@ -1,5 +1,6 @@
-<div align="center" style="scale: 60%"><img src="assets/django.png"></div>
-<h1 align="center">Django Docker Saas Template</h1>
+<div align="center"><img src="assets/django.png" style="width: 200px"></div>
+<br>
+<h1 align="center">Django + Docker Saas Template</h1>
 
 <div align="center">
 
@@ -93,7 +94,7 @@ Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
 
 - **Files**
 
-  - `pyproject.toml` - Python environment configuration
+  - `pyproject.toml` - Python environment configuration in TOML
   - `uv.lock` - Used by **uv** to version dependencies
 
 ## 📚 Libraries
@@ -177,16 +178,24 @@ make run
 just run
 ```
 
+or you can just run simple commands using
+
+```bash
+uv run YOUR_COMMAND
+```
+
 ## ❤️ Thanks
 
-Many projects and blog posts have been great inspirations for this one.
-
-Here are they :
+Projects and blog posts that inspired this template :
 
 - [Cookiecutter Django](https://github.com/cookiecutter/cookiecutter-django)
 - [Testdriven Blog](https://testdriven.io/blog/)
 - [SaaS Pegasus Guides](https://www.saaspegasus.com/guides/)
--
+- [Digital
+  Ocean](https://www.digitalocean.com/community/tutorials/how-to-scale-and-secure-a-django-application-with-docker-nginx-and-let-s-encrypt)
+- [Django Astro
+  Demo](https://github.com/marqetintl/django-astro-jsx-demo/blob/main/django/config/urls.py)
+- [Medium Article](https://medium.com/@Am_Issath/list/django-web-development-tricks-e2bac4bc0742)
 
 ## 📜 License
 
