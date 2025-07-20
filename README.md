@@ -6,12 +6,17 @@
 
 ![license](https://img.shields.io/github/license/leoraclet/django-saas-template)
 ![language](https://img.shields.io/github/languages/top/leoraclet/django-saas-template)
-![lastcommit](https://img.shields.io/github/last-commit/leoraclet/django-saas-template)
+![lastcommit](https://img.shields.io/github/last-commit/leoraclet/django-saas-template) <br>
+![Language](https://img.shields.io/badge/Language-Python-1d50de)
+![Libraries](https://img.shields.io/badge/Framework-Django-fa8925)
+![Size](https://img.shields.io/badge/Size-376Mo-f12222)
+![OpenSource](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)
 
 </div>
 
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
+- [🌟 Showcase](#-showcase)
 - [📖 About](#-about)
 - [✨ Features](#-features)
 - [📦 Structure](#-structure)
@@ -20,6 +25,12 @@
 - [❤️ Thanks](#️-thanks)
 - [📜 License](#-license)
 
+
+## 🌟 Showcase
+
+> [!NOTE]
+>
+> Some images coming some day ...
 
 ## 📖 About
 
@@ -82,12 +93,18 @@ Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
 
 ## 📦 Structure
 
+> [!NOTE]
+>
+> The project's structure should speak for itself, but here are the most important parts just in case
+> you're wondering
+
 - **Directories**
 
-  - [**`terraform`**](./terraform/) - Terraform configuration files
-  - [**`ansible`**](./ansible/) - Ansible configuration files
+  - [**`.github`**](./.github/workflows/) - CI / CD workflows
+  - [**`terraform`**](./terraform/) - Terraform configuration files (*empty for now*)
+  - [**`ansible`**](./ansible/) - Ansible configuration files (*also empty*)
   - [**`server`**](./server/) - Main **Django** application
-  - [**`assets`**](./assets/) - Images, Shaders and other Resources.
+  - [**`assets`**](./assets/) - Images and other Resources.
   - [**`docker`**](./docker/) - Docker start scripts
   - [**`etc`**](./etc/) - Services configuration
   - [**`frontend`**](./frontend/) - Frontend app (**Vite** + **Svelte** + **Tailwind CSS**)
@@ -101,8 +118,8 @@ Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
 
 > [!NOTE]
 >
-> Here are the principal libraries / dependencies of this project, but you can find all of theme in
-> the [`pyproject.toml`](./pyproject.toml) file.
+> Here are the main libraries / dependencies of this project, but you can find all of them in the
+> [`pyproject.toml`](./pyproject.toml) file.
 
 - 🌐 Web Framework & Core
   - **[`django`](https://www.djangoproject.com/):** Full-featured web framework for building modern
