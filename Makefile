@@ -36,3 +36,7 @@ up:
 .PHONY:
 down:
 	docker compose -f docker-compose.test.yml down
+
+.PHONY:
+logs:
+	docker compose -f docker-compose.test.yml logs -f

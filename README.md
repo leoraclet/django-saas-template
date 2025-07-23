@@ -14,6 +14,11 @@
 
 </div>
 
+> [!IMPORTANT]
+>
+> This project is currently under active development. I'm regularly making updates and additions to improve its completeness and functionality.
+
+
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [🌟 Showcase](#-showcase)
@@ -22,6 +27,8 @@
 - [📦 Structure](#-structure)
 - [📚 Libraries](#-libraries)
 - [🚀 Install \& Run](#-install--run)
+  - [🏠 System](#-system)
+  - [🐳 Using Docker](#-using-docker)
 - [❤️ Thanks](#️-thanks)
 - [📜 License](#-license)
 
@@ -34,62 +41,60 @@
 
 ## 📖 About
 
-This is a fully featured template for building a Django-based SaaS application, containerized with
-Docker. It includes everything from user authentication and background task processing to a REST API
+This is a fully featured template for building a **Django**-based **SaaS** application, containerized with
+**Docker**. It includes everything from user authentication and background task processing to a **REST API**
 with complete documentation.
 
-The frontend is developed using Vite and Svelte, compiled into static assets and served via Django’s
+The frontend is developed using **Vite** and **Svelte**, compiled into static assets and served via Django’s
 template system.
 
-For development, testing, and production, the stack incorporates tools such as Docker, PostgreSQL,
-Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
+For development, testing, and production, the stack incorporates tools such as **PostgreSQL**,
+**Redis**, **Caddy**, **MailHog**, **Sentry**, **Grafana**, and **Prometheus**.
 
 ## ✨ Features
 
-- **Project**
+**Project**
 
-    - 🔄 **Reproducible**: Built with Nix, this configuration can be effortlessly reproduced on
-    other machines, ensuring a consistent setup.
+- 🔄 **Reproducibility**: The project is built using [**uv**](https://docs.astral.sh/uv/), enabling seamless setup replication across different machines for consistent environments.
 
-    - 📖 **Documented**: Most of the parts of my configuration files are commented and documented
-    with links and explanations if necessary
+- 📖 **Well-Documented**: Source files include thorough comments and, where applicable, links and explanations to clarify key settings.
 
-- **Program**
+**Program**
 
-    - 🧱 **Django-based backend** Powerful and extensible backend using Django, ideal for SaaS
-    applications.
+  - 🧱 **Django-based backend** Powerful and extensible backend using Django, ideal for SaaS
+  applications.
 
-    - 🔐 **Built-in authentication system** User registration, login, password reset, and more out
-    of the box.
+  - 🔐 **Built-in authentication system** User registration, login, password reset, and more out
+  of the box.
 
-    - ⚙️ **Background task support** Integrated support for background processing (e.g., with Celery
-    or Django Q).
+  - ⚙️ **Background task support** Integrated support for background processing (e.g., with Celery
+  or Django Q).
 
-    - 🔌 **REST API with documentation** Fully functional REST API with auto-generated documentation
-    (e.g., Swagger or ReDoc).
+  - 🔌 **REST API with documentation** Fully functional REST API with auto-generated documentation
+  (e.g., Swagger or ReDoc).
 
-    - 🎨 **Modern frontend with Vite and Svelte** Responsive and fast frontend built with Svelte and
-    bundled via Vite, served through Django templates.
+  - 🎨 **Modern frontend with Vite and Svelte** Responsive and fast frontend built with Svelte and
+  bundled via Vite, served through Django templates.
 
-    - 🐳 **Docker-based development and deployment** Consistent environments using Docker for local
-    development, testing, and production.
+  - 🐳 **Docker-based development and deployment** Consistent environments using Docker for local
+  development, testing, and production.
 
-    - 📊 **Monitoring and observability tools** Integrated support for Prometheus and Grafana for
-    metrics and monitoring.
+  - 📊 **Monitoring and observability tools** Integrated support for Prometheus and Grafana for
+  metrics and monitoring.
 
-    - 📬 **Email testing with MailHog** Catch and inspect outgoing emails during development.
+  - 📬 **Email testing with MailHog** Catch and inspect outgoing emails during development.
 
-    - 📈 **Error tracking with Sentry** Real-time error logging and alerting for faster debugging
-    and maintenance.
+  - 📈 **Error tracking with Sentry** Real-time error logging and alerting for faster debugging
+  and maintenance.
 
-    - 🌐 **Caddy as a web server and reverse proxy** Automatically manages HTTPS and routing for
-    production-ready deployments.
+  - 🌐 **Caddy as a web server and reverse proxy** Automatically manages HTTPS and routing for
+  production-ready deployments.
 
-    - 🐘 **PostgreSQL database** Reliable and robust relational database for handling application
-      data.
+  - 🐘 **PostgreSQL database** Reliable and robust relational database for handling application
+    data.
 
-    - 🚀 **Redis integration** In-memory data store for caching, session management, and background
-    tasks.
+  - 🚀 **Redis integration** In-memory data store for caching, session management, and background
+  tasks.
 
 ## 📦 Structure
 
@@ -98,28 +103,38 @@ Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
 > The project's structure should speak for itself, but here are the most important parts just in case
 > you're wondering
 
-- **Directories**
+**Directories**
 
-  - [**`.github`**](./.github/workflows/) - CI / CD workflows
-  - [**`terraform`**](./terraform/) - Terraform configuration files (*empty for now*)
-  - [**`ansible`**](./ansible/) - Ansible configuration files (*also empty*)
-  - [**`server`**](./server/) - Main **Django** application
-  - [**`assets`**](./assets/) - Images and other Resources.
-  - [**`docker`**](./docker/) - Docker start scripts
-  - [**`etc`**](./etc/) - Services configuration
-  - [**`frontend`**](./frontend/) - Frontend app (**Vite** + **Svelte** + **Tailwind CSS**)
+- [**`.github`**](./.github/) - Contains GitHub Actions CI/CD workflows.
+- [**`.vscode`**](./.vscode/) - VS Code-specific settings and helper documentation.
+- [**`ansible`**](./ansible/) - Ansible configuration files (*currently empty*).
+- [**`assets`**](./assets/) - Static image resources used in the project.
+- [**`docker`**](./docker/) - Scripts to run services via Docker (e.g. Django, Celery, Gunicorn).
+- [**`etc`**](./etc/) - Configuration files for infrastructure components (e.g. Grafana, Traefik, Caddy, Prometheus).
+- [**`frontend`**](./frontend/) - Frontend app using **Svelte**, **Vite**, and **TypeScript**.
+- [**`server`**](./server/) - Main Django application, including apps, configuration, static files, templates, and localization.
+- [**`terraform`**](./terraform/) - Infrastructure-as-code configuration with Terraform (*currently empty*).
 
-- **Files**
+**Files**
 
-  - `pyproject.toml` - Python environment configuration in TOML
-  - `uv.lock` - Used by **uv** to version dependencies
+- `.dockerignore`, `.gitignore`, `.gitattributes` - Ignore rules and Git configurations.
+- `.editorconfig`, `.flake8`, `.pre-commit-config.yaml` - Formatting and linting configurations.
+- `.env.prod`, `db.prod.env` - Environment variable files for production setup.
+- `.python-version` - Python version specification (for pyenv and tooling).
+- `Dockerfile.test`, `docker-compose*.yml` - Docker configuration files for different environments.
+- `Jenkinsfile` - CI/CD pipeline configuration for Jenkins.
+- `Justfile`, `Makefile` - Task runners for development and automation.
+- `Procfile` - Process declaration file for deployment (e.g. Heroku).
+- `LICENSE`, `README.md` - License and documentation files.
+- `pyproject.toml`, `requirements.txt`, `uv.lock` - Python environment and dependency configuration.
+
 
 ## 📚 Libraries
 
 > [!NOTE]
 >
-> Here are the main libraries / dependencies of this project, but you can find all of them in the
-> [`pyproject.toml`](./pyproject.toml) file.
+> Below are some of the key libraries and dependencies used in this project. For the full list, refer to the [`pyproject.toml`](./pyproject.toml) file.
+
 
 - 🌐 Web Framework & Core
   - **[`django`](https://www.djangoproject.com/):** Full-featured web framework for building modern
@@ -162,16 +177,20 @@ Redis, Caddy, MailHog, Sentry, Grafana, and Prometheus.
 
 ## 🚀 Install & Run
 
-First, ensure you have the [**`uv`**](https://docs.astral.sh/uv/) python package manager installed.
+If you'd like to run this Django app on your machine, here are two versions of how to do so by either doing on your [**system**](#-system) or [**using docker**](#-using-docker).
 
-If so, then clone the repo
+### 🏠 System
+
+First, make sure the [**`uv`**](https://docs.astral.sh/uv/getting-started/installation/) Python package manager is installed on your system.
+
+Once that's done, clone the repository
 
 ```bash
 git clone https://github.com/leoraclet/django-saas-template
 cd django-saas-template
 ```
 
-and install dependencies
+Then, install the project dependencies:
 
 ```bash
 uv sync
@@ -179,26 +198,49 @@ uv sync
 
 > [!TIP]
 >
-> You might need to create a virtual environment first.
+> You may need to create a virtual environment beforehand:
 > ```bash
 > uv venv
 > ```
 
-Finally, depending if you have [**Make**](https://www.gnu.org/software/make/manual/make.html) or
-[**Just**](https://github.com/casey/just) installed, you can run the developement server like this
+Finally, if you have either [**Make**](https://www.gnu.org/software/make/manual/make.html) or
+[**Just**](https://github.com/casey/just) installed, you can launch the development server accordingly.
 
 ```bash
-make run
-```
-
-```bash
-just run
+make migrate  # To migrate the Database (MANDATORY)
+make run  # To run the developement server
 ```
 
 or you can just run simple commands using
 
 ```bash
-uv run YOUR_COMMAND
+uv run {YOUR_COMMAND}
+```
+
+### 🐳 Using Docker
+
+Ensure that [**Docker**](https://docs.docker.com/get-started/introduction/get-docker-desktop/) is installed on your system and that the `docker` command is available in your terminal.
+
+To start the Docker setup, run:
+
+```bash
+docker compose up -d
+```
+
+> [!TIP]
+>
+> To rebuild the image from scratch (without using the cache), use the following command:
+>```bash
+> docker compose build --no-cache
+>```
+
+As with local development, you can use the [**`Makefile`**](./Makefile) (or [**`Justfile`**](./Justfile)) to manage Docker-related tasks easily with the following commands:
+
+```bash
+make up      # Build (if needed) and start the containers
+make down    # Stop and remove containers and associated networks
+make build   # Build or rebuild the Docker services
+make logs    # View the output logs from running containers
 ```
 
 ## ❤️ Thanks
